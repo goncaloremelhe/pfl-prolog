@@ -1,0 +1,2 @@
+play :-
+    write('oi!').
