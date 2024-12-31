@@ -18,8 +18,6 @@ play :-
     valid_input([5, 6, 7, 8, 9, 10], PiecesPerSide),
     BoardSize is PiecesPerSide + 2,
 
-    initial_state([GameMode, BoardSize], GameState),
-
-    display_game(GameState).
+    game_loop([GameMode, BoardSize]).
 
 
