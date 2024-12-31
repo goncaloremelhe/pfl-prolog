@@ -21,3 +21,9 @@ valid_input(Options, Value) :-
     read_number(Value),
     member(Value,Options),
     !.
+
+between(Min, Max, Min):- Min =< Max.
+between(Min, Max, Value):-
+    Min < Max,
+    NextMin is Min + 1,
+    between(NextMin, Max, Value).
