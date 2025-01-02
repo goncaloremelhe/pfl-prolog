@@ -14,8 +14,8 @@ play :-
     valid_input([1], GameMode),
 
 
-    write('Pick the number of pieces per side of the board (5-10):\n'),
-    valid_input([5, 6, 7, 8, 9, 10], PiecesPerSide),
+    write('Pick the number of pieces per side of the board (6, 8 or 10):\n'),
+    valid_input([6, 8, 10], PiecesPerSide),
     BoardSize is PiecesPerSide + 2,
 
     game_loop([GameMode, BoardSize]).

@@ -24,7 +24,7 @@ valid_input(Options,Value) :-
 % Repeats unitl a valid input is entered
 valid_input(Options, Value) :-
     repeat,
-    write('Nao foi desta :(\nPodes tentar outra:\n'),
+    write('Invalid Input :(\nPlease try again:\n'),
     read_number(Value),
     member(Value,Options),
     !.
