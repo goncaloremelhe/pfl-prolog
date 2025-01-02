@@ -14,10 +14,10 @@ generate_row(Size, RowNum, Row) :-
 % determines what to place on a cell depending on x and y coords
 % cells at the borders are blocked
 
-init_cell(_,1,1, blocked):- !.
-init_cell(Size,Size,1, blocked):- !.
-init_cell(Size,1,Size, blocked):- !.
-init_cell(Size,Size,Size, blocked):- !.
+init_cell(_,1,1, corner):- !.
+init_cell(Size,Size,1, corner):- !.
+init_cell(Size,1,Size, corner):- !.
+init_cell(Size,Size,Size, corner):- !.
 
 % placeholder should be replaced by black or white randomly (TODO)
 
@@ -35,13 +35,18 @@ piece(white,'W').
 piece(empty,'0').
 piece(blocked,'X').
 piece(placeholder, 'P').
+piece(corner, 'C').
 
 % ----------- show_board(+Board)
 % writes Board on the console, row by row
-show_board([]).
-show_board([Row|RemainingRows]) :-
+show_board([], _).
+show_board([Row|RemainingRows], Coord) :-
+    write(Coord), write('  '),
+    char_code(Coord, Code),
+    NewCode is Code+1,
+    char_code(NewCoord, NewCode),
     show_row(Row), nl,
-    show_board(RemainingRows).
+    show_board(RemainingRows, NewCoord).
 
 
 % ----------- show_row(+Row)
@@ -54,6 +59,9 @@ show_row([Piece|RemainingPieces]) :-
 
 % ----------- show_piece(+Piece)
 % shows a piece
+show_piece(Piece):-
+    piece(Piece, 'C'),
+    write(' ').
 show_piece(Piece):-
     piece(Piece, P),
     write(P).
