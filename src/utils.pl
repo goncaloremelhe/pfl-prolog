@@ -41,7 +41,6 @@ between(Min, Max, Value):-
 % Ensures that the users input matches one of the options
 valid_input_options(Options, Value) :-
     repeat,
-    write('Choose a piece to move (e.g., 1-2):\n'),
     get_line(Input, []),
     parse_move_code(Input, Row, Col),
     number_codes(Row, RowCodes),

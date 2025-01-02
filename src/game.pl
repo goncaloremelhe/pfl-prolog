@@ -38,14 +38,29 @@ game(GameConfig):-
 
 % ----------- game_loop(+GameConfig, +GameState)
 % starts the game loop with given config
-game_loop([1, _, _], GameState):-
+game_loop([1, BoardSize, _], GameState):-
     display_game(GameState),
+
     get_remaining_pieces(GameState, RemainingPieces),
     write('Available pieces:\n'),
-    print_remaining_pieces(RemainingPieces),
+    print_options(RemainingPieces),
     convert_to_options(RemainingPieces, Options),
+
+    write('Choose a piece to move (e.g., 1-2):\n'),
     valid_input_options(Options, SelectedPiece),
-    format('You chose: ~w\n', [SelectedPiece]).
+    format('You chose: ~w\n', [SelectedPiece]),
+
+    parse_move_code(SelectedPiece, Row, Col),
+    get_piece_moves(GameState, BoardSize, (Row,Col), Moves),
+    write('Possible moves for this piece:\n'), 
+    print_options(Moves),
+
+    convert_to_options(Moves, MoveOptions),
+    write('Choose a move to that piece (e.g., 1-2):\n'),
+    valid_input_options(MoveOptions, SelectedMove),
+    format('You chose: ~w\n', [SelectedMove]),
+
+    nl.
 
 
 % ----------- initial_state(+GameConfig)
@@ -120,11 +135,71 @@ print_Coords(CurrIndex, Length):-
     NewIndex is CurrIndex+1,
     print_Coords(NewIndex, Length).
 
-% ----------- print_remaining_pieces(+Pieces)
+% ----------- print_options(+Options)
 % Print available pieces to move in the format row-column
-print_remaining_pieces([]) :- nl, nl.
-print_remaining_pieces([(Row,Col)|RemainingPieces]) :-
+print_options([]) :- nl, nl.
+print_options([(Row,Col)|RemainingOptions]) :-
     format('~w-~w ', [Row, Col]),
-    print_remaining_pieces(RemainingPieces).
+    print_options(RemainingOptions).
+
+
+
+% ----------- get_piece_moves(+Board, +Position, -Moves)
+% Get valid moves for a piece at a given position based on its location and available empty spaces
+
+get_piece_moves([Board, _, _], _, (Row, 1), Moves) :-
+    nth1(Row, Board, BoardRow),
+    count_empty(BoardRow, Count, 0),
+    calculate_left_perimeter_moves(Row, Count, Moves).
+get_piece_moves([Board, _, _], BoardMax, (Row, BoardMax), Moves) :-
+    nth1(Row, Board, BoardRow),
+    count_empty(BoardRow, Count, 0),
+    write(BoardMax), nl,
+    calculate_right_perimeter_moves(Row, BoardMax, Count, Moves).
+get_piece_moves([Board, _, _], BoardMax, (BoardMax, Col), Moves) :-
+    get_column(Board, Col, Column),
+    count_empty(Column, Count, 0),
+    calculate_top_perimeter_moves(Col, BoardMax, Count, Moves).
+get_piece_moves([Board, _, _], _, (1, Col), Moves) :-
+    get_column(Board, Col, Column),
+    count_empty(Column, Count, 0),
+    calculate_bottom_perimeter_moves(Col, Count, Moves).
+
+count_empty([], Acc, Acc).
+count_empty([empty|Cells], Count, Acc) :-
+    Acc1 is Acc + 1,
+    count_empty(Cells, Count, Acc1).
+count_empty([_|Cells], Count, Acc):-
+    count_empty(Cells, Count, Acc).
+
+get_column([], _, []).
+get_column([Row|Rows], ColIndex, [Elem|Elems]) :-
+    nth1(ColIndex, Row, Elem),
+    get_column(Rows, ColIndex, Elems).
+
+calculate_left_perimeter_moves(_, 0, []).
+calculate_left_perimeter_moves(Row, Count, [(Row, Col)|Moves]) :-
+    Col is Count + 1,
+    NewCount is Count - 1, 
+    calculate_left_perimeter_moves(Row, NewCount, Moves).
+
+calculate_right_perimeter_moves(_, _, 0, []).
+calculate_right_perimeter_moves(Row, BoardMax, Count, [(Row, Col)|Moves]) :-
+    Col is BoardMax - Count,
+    NewCount is Count - 1,
+    calculate_right_perimeter_moves(Row, BoardMax, NewCount, Moves).
+
+calculate_bottom_perimeter_moves(_, 0, []).
+calculate_bottom_perimeter_moves(Col, Count, [(Row, Col)|Moves]) :-
+    Row is Count + 1,
+    NewCount is Count - 1, 
+    calculate_bottom_perimeter_moves(Col, NewCount, Moves).
+
+calculate_top_perimeter_moves(_, _, 0, []).
+calculate_top_perimeter_moves(Col, BoardMax, Count, [(Row, Col)|Moves]) :-
+    Row is BoardMax - Count,
+    NewCount is Count - 1,
+    calculate_right_perimeter_moves(Row, BoardMax, NewCount, Moves).
+
 
 
