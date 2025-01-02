@@ -10,22 +10,26 @@ generate_board(Size, Board) :-
 generate_row(Size, RowNum, Row) :-
     findall(Cell, (between(1, Size, ColNum), init_cell(Size, RowNum, ColNum, Cell)), Row).
 
-% ----------- init_cell(+Size,+RowNum,+ColNum,-Piece)
-% determines what to place on a cell depending on x and y coords
-% cells at the borders are blocked
-
+% ----------- init_cell(+Size, +RowNum, +ColNum, -Piece)
+% Determines what to place on a cell depending on x and y coords
 init_cell(_,1,1, corner):- !.
 init_cell(Size,Size,1, corner):- !.
 init_cell(Size,1,Size, corner):- !.
 init_cell(Size,Size,Size, corner):- !.
 
-% placeholder should be replaced by black or white randomly (TODO)
+% Alternating black and white marbles on the border
+init_cell(_, 1, ColNum, Piece) :- alternating_marble(1, ColNum, Piece), !.
+init_cell(Size, Size, ColNum, Piece) :- alternating_marble(Size, ColNum, Piece), !.
+init_cell(_, RowNum, 1, Piece) :- alternating_marble(RowNum, 1, Piece), !.
+init_cell(Size, RowNum, Size, Piece) :- alternating_marble(RowNum, Size, Piece), !.
 
-init_cell(_, 1, _, placeholder):- !.
-init_cell(Size, Size, _, placeholder):- !.
-init_cell(_, _, 1, placeholder):- !.
-init_cell(Size, _, Size, placeholder):- !.
-init_cell(_, _, _, empty):- !. 
+% Empty cells in the center of the board
+init_cell(_, _, _, empty):- !.
+
+% ----------- alternating_marble(+Row, +Col, -Piece)
+% Determines whether to place black or white based on the row and column indices
+alternating_marble(Row, Col, black) :- (Row + Col) mod 2 =:= 0, !.
+alternating_marble(_, _, white).
 
 
 % ----------- piece(+Name, -Char)
@@ -42,9 +46,7 @@ piece(corner, 'C').
 show_board([], _).
 show_board([Row|RemainingRows], Coord) :-
     write(Coord), write('  '),
-    char_code(Coord, Code),
-    NewCode is Code+1,
-    char_code(NewCoord, NewCode),
+    NewCoord is Coord-1,
     show_row(Row), nl,
     show_board(RemainingRows, NewCoord).
 
