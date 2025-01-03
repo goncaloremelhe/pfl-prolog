@@ -1,5 +1,5 @@
 :- use_module(library(lists)).
-:-consult('utils.pl').
+:- consult('utils.pl').
 :- consult('board.pl').
 
 play :-
@@ -149,8 +149,6 @@ print_options([Option|RemainingOptions]) :-
     write(' '),
     print_options(RemainingOptions).
 
-
-
 % ----------- get_piece_moves(+Board, +Position, -Moves)
 % Get valid moves for a piece at a given position based on its location and available empty spaces
 % Em cada uma, pega na row/column, vê quantos empty tem e calcula os mvoes possiveis
@@ -205,10 +203,107 @@ calculate_top_perimeter_moves(Col, BoardMax, Count, [(Row, Col)|Moves]) :-
     NewCount is Count - 1,
     calculate_top_perimeter_moves(Col, BoardMax, NewCount, Moves).
 
-
-
 move([Board, black, _],  SelectedPiece, SelectedMove, [NewBoard, white, _]):-
     move_pieces(Board, SelectedPiece, SelectedMove, NewBoard).
 
 move([Board, white, _],  SelectedPiece, SelectedMove, [NewBoard, black, _]):-
     move_pieces(Board, SelectedPiece, SelectedMove, NewBoard).
+
+
+% ----------- valid_moves(+GameState, -ListOfMoves)
+% Retrieves all valid moves for the current player
+% TODO
+
+% ----------- game_over(+GameState, -Winner)
+% Checks if the game is over, this means checking if both players are out of valid moves, if so, the winner is calculated
+game_over([Board, _, _], Winner):-
+    valid_moves([Board, white, _], []),
+    valid_moves([Board, black, _], []),
+    calculate_score(Board, white, ScoreWhite),
+    calculate_score(Board, black, ScoreBlack),
+    winner_is(ScoreBlack, ScoreWhite, Winner).
+
+winner_is(ScoreBlack, ScoreWhite, black):- ScoreBlack > ScoreWhite.
+winner_is(ScoreBlack, ScoreWhite, white):- ScoreWhite > ScoreBlack.
+winner_is(ScoreBlack, ScoreWhite, draw):- ScoreBlack =:= ScoreWhite.
+
+
+% ------------ calculate_score(+Board, +Player, -Score)
+% Calculates score for specified player when game is over, for now returning standard score
+calculate_score(Board, Player, ScoreStandard):-
+    find_player_pieces(Board, Player, ListOfPieces),
+    find_groups(ListOfPieces, Groups),
+
+    biggest_group(Groups, ScoreStandard).
+    %multiply_groups(Groups, ScoreProduct). %TODO add to game configuration which scoring the users prefer
+
+% Main predicate: Finds all groups of adjacent pieces
+find_groups(Pieces, Groups) :-
+    find_groups_aux(Pieces, [], Groups). % Start the recursive search with an empty accumulator.
+
+% Base case: no more pieces, no more groups.
+find_groups_aux([], Groups, Groups).
+
+% Recursive case: process a piece, find its group, and continue with the rest.
+find_groups_aux([Piece|Rest], Accumulator, Groups) :-
+    dfs([Piece], Rest, Group, RemainingPieces), % Find one group starting with Piece.
+    append(Accumulator, [Group], NewAccumulator), % Add the found group to the accumulator.
+    find_groups_aux(RemainingPieces, NewAccumulator, Groups). % Continue with the remaining pieces.
+
+% DFS to find all connected pieces
+dfs([], Remaining, [], Remaining). % Base case: no more pieces to explore.
+dfs([Current|Stack], Pieces, [Current|Group], Remaining) :-
+    findall(Neighbor, 
+            (member(Neighbor, Pieces), adjacent(Current, Neighbor)), 
+            Neighbors), % Find all unvisited neighbors.
+    subtract(Pieces, Neighbors, NewPieces), % Remove Neighbors from Pieces.
+    append(Neighbors, Stack, NewStack), % Add Neighbors to the stack.
+    dfs(NewStack, NewPieces, Group, Remaining). % Continue DFS.
+
+
+
+% Check for orthogonal adjacency
+adjacent((Row, Col), (R, C)) :-
+    (R is Row - 1, C is Col);
+    (R is Row + 1, C is Col);
+    (R is Row, C is Col - 1);
+    (R is Row, C is Col + 1).
+
+% find the group with the largest size -> standard scoring
+biggest_group(Groups, Size) :-
+    findall(Length, (member(Group, Groups), length(Group, Length)), Lengths),
+    max_list(Lengths, Size).
+
+% Multiply the sizes of all groups -> product scoring
+multiply_groups(Groups, Product) :-
+    findall(Length, (member(Group, Groups), length(Group, Length)), Lengths),
+    foldl(multiply, Lengths, 1, Product).
+
+multiply(X, Y, Z) :- Z is X * Y.
+
+
+%-------------- find_player_pieces(+Board, +Player, -ListOfPieces)
+% Finds all coordinates of the specified Player's pieces on the Board.
+find_player_pieces(Board, Player, ListOfPieces) :-
+    findall((Row, Col),
+            (nth0(Row, Board, RowList),
+             nth0(Col, RowList, Player)),
+            ListOfPieces).
+
+
+
+test_game_over:-  
+Board1 = [
+    [blocked, blocked, blocked, blocked, blocked, white,   blocked, blocked],
+    [blocked, empty,   empty,   black,   black,   black,   empty,   blocked],
+    [blocked, empty,   white,   empty,   white,   white,   black,   blocked],
+    [blocked, black,   black,   black,   black,   black,   white,   blocked],
+    [blocked, empty,   empty,   white,   white,   black,   white,   blocked],
+    [blocked, empty,   empty,   black,   white,   white,   white,   blocked],
+    [blocked, empty,   empty,   black,   empty,   white,   empty,   blocked],
+    [blocked, blocked, blocked, blocked, blocked, blocked, blocked, blocked]
+],
+
+
+valid_moves([Board1, white, _], P),
+write(P).

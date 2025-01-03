@@ -1,3 +1,5 @@
+:- use_module(library(lists)).
+
 % ----------- read_number(+X)
 % Reads number input from user and converts it to an integer, X is unified with said integer.
 read_number(X) :-
@@ -98,3 +100,7 @@ invertList(L,Inv):-
 invertList_aux([],L,L).
 invertList_aux([H|T],Acc,Inv):-
     invertList_aux(T,[H|Acc],Inv).
+
+
+
+
