@@ -203,7 +203,7 @@ calculate_top_perimeter_moves(_, _, 0, []).
 calculate_top_perimeter_moves(Col, BoardMax, Count, [(Row, Col)|Moves]) :-
     Row is BoardMax - Count,
     NewCount is Count - 1,
-    calculate_right_perimeter_moves(Row, BoardMax, NewCount, Moves).
+    calculate_top_perimeter_moves(Col, BoardMax, NewCount, Moves).
 
 
 

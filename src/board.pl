@@ -72,6 +72,7 @@ show_piece(blocked) :-
 show_piece(_) :-
     write(' ').
 
+%Left/Right Move
 move_pieces(Board, SelectedPiece, SelectedMove, NewBoard) :-
     parse_move_code(SelectedPiece, RowPiece, ColPiece),
     parse_move_code(SelectedMove, RowMove, ColMove),
@@ -93,6 +94,31 @@ move_pieces(Board, SelectedPiece, SelectedMove, NewBoard) :-
 
     % Mudar Row
     replace_row(Board, BoardRowIndex, NewRow, NewBoard).
+
+% Up/Down Move
+move_pieces(Board, SelectedPiece, SelectedMove, NewBoard) :-
+    parse_move_code(SelectedPiece, RowPiece, ColPiece),
+    parse_move_code(SelectedMove, RowMove, ColMove),
+    ColPiece = ColMove,
+
+    % Get Column
+    get_column(Board, ColPiece, Column),
+    invertList(Column, OldColumn),
+
+    % Obter Peça
+    nth1(RowPiece, OldColumn, Piece),
+
+
+    % Mover Peça
+    move_piece_recursively(OldColumn, RowPiece, RowMove, Piece, TempRow),
+
+    % Mudar para Blocked
+    replace_element(TempRow, RowPiece, blocked, NewRow),
+
+    % Mudar Column
+    replace_column(Board, ColPiece, NewRow, NewBoard).
+
+
 
 move_piece_recursively(Row, TargetCol, TargetCol, _, Row).
 
@@ -133,6 +159,7 @@ move_piece_recursively(Row, CurrentCol, TargetCol, Piece, NewRow) :-
 
     move_piece_recursively(TempRow3, NextCol, TargetCol, Piece, NewRow).
 
+
 replace_row(Board, RowIndex, NewRow, NewBoard) :-
     nth1(RowIndex, Board, _, Rest),
     nth1(RowIndex, NewBoard, NewRow, Rest).
@@ -140,3 +167,13 @@ replace_row(Board, RowIndex, NewRow, NewBoard) :-
 replace_element(List, Index, Element, NewList) :-
     nth1(Index, List, _, Rest),
     nth1(Index, NewList, Element, Rest).
+
+
+replace_column(Board, ColumnIndex, NewRow, NewBoard) :-
+    invertList(NewRow, ReversedColumn),
+    replace_column_helper(Board, ColumnIndex, ReversedColumn, NewBoard).
+
+replace_column_helper([], _, [], []).
+replace_column_helper([Row|RestRows], ColIndex, [NewElement|RestElements], [NewRow|NewBoard]) :-
+    replace_element(Row, ColIndex, NewElement, NewRow),
+    replace_column_helper(RestRows, ColIndex, RestElements, NewBoard).
