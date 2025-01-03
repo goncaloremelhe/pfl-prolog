@@ -82,3 +82,9 @@ get_line(Result, Acc) :-
 get_line(Result, Acc) :-
     atom_chars(Result, Acc), !.
 
+% ----------- get_column(+Result, +Acc)
+% Get a column in a two dimension list
+get_column([], _, []).
+get_column([Row|Rows], ColIndex, [Elem|Elems]) :-
+    nth1(ColIndex, Row, Elem),
+    get_column(Rows, ColIndex, Elems).
