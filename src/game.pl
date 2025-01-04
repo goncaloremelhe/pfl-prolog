@@ -298,8 +298,34 @@ find_player_pieces(Board, Player, ListOfPieces) :-
 
 
 
-test_game_over:-  
+test_game_over:-
+
+
 Board1 = [
+    [blocked, black,   white,   black,   white,   black,   white,   blocked],
+    [black,   empty,   empty,   empty,   empty,   empty,   empty,   black],
+    [white,   empty,   empty,   empty,   empty,   white,   empty,   white],
+    [black,   empty,   empty,   empty,   empty,   empty,   empty,   black],
+    [white,   empty,   empty,   empty,   empty,   empty,   empty,   white],
+    [black,   empty,   empty,   empty,   empty,   empty,   empty,   black],
+    [white,   empty,   empty,   empty,   empty,   empty,   empty,   white],
+    [blocked, black,   white,   black,   white,   black,   white,   blocked]
+
+],
+
+Board2 = [
+    [blocked, black,   white,   blocked, blocked, black,   white,   blocked],
+    [blocked, empty,   empty,   black,   empty,   empty,   empty,   blocked],
+    [white,   empty,   empty,   empty,   white,   empty,   empty,   white],
+    [blocked, empty,   white,   empty,   empty,   empty,   black,   blocked],
+    [blocked, empty,   empty,   empty,   empty,   white,   empty,   blocked],
+    [white,   empty,   empty,   black,   empty,   empty,   empty,   black],
+    [blocked, empty,   empty,   empty,   black,   empty,   empty,   blocked],
+    [blocked, black,   white,   blocked, blocked, black,   white,   blocked]
+],
+
+ 
+Board3 = [
     [blocked, blocked, blocked, blocked, blocked, white,   blocked, blocked],
     [blocked, empty,   empty,   black,   black,   black,   empty,   blocked],
     [blocked, empty,   white,   empty,   white,   white,   black,   blocked],
@@ -310,6 +336,7 @@ Board1 = [
     [blocked, blocked, blocked, blocked, blocked, blocked, blocked, blocked]
 ],
 
-
-valid_moves([Board1, white, _], P),
-write(P).
+length(Board2, Length),
+show_board(Board2, Length),
+write('\n  '),
+print_Coords(1, Length).
