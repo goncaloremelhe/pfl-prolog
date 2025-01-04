@@ -3,6 +3,7 @@
 
 % ----------- generate_board(+Size, -Board)
 % Generates the board in its initial state, a square of size Size
+
 generate_board(Size, Board) :-
     findall(Row, (between(1, Size, RowNum), generate_row(Size, RowNum, Row)), Board).
 

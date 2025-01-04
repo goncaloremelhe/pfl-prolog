@@ -16,7 +16,7 @@ play :-
     difficultyLevel(GameMode, Level),
 
     write('\nPick the number of pieces per side of the board (6, 8 or 10):\n'),
-    valid_input([4, 6, 8, 10], PiecesPerSide),
+    valid_input([2,4, 6, 8, 10], PiecesPerSide),
     BoardSize is PiecesPerSide + 2,
     game([GameMode, BoardSize, Level]).
 
@@ -49,31 +49,11 @@ getPiecesFromValidMoves([(Piece, _)|Moves], [Piece|Pieces]):-
 % ----------- game_loop(+GameConfig, +GameState)
 % starts the game loop with given config
 
-game_loop(_, [Board, _, _], 'black', _, _) :-
-    write('Temos um divo!!\n'),
-    write('Vencedor: Pretooo\n'),
-    write('Score: '),
-    calculate_score(Board, black, Score),
-    write(Score), nl.
-game_loop(_, [Board, _, _], 'white', _, _) :-
-    write('Temos um divo!!\n'),
-    write('Vencedor: Brancooo\n'),
-    write('Score: '),
-    calculate_score(Board, white, Score),
-    write(Score), nl.
-game_loop(_, _, 'draw', _, _) :-
-    write('Temos dois divo!!\n').
-game_loop([1, BoardSize, Level], [Board, black, GameMode], 'DNF', []) :-
-    valid_moves([Board, white, GameMode], WhiteMoves),
-    WhiteMoves \= [],
-    game_loop([1, BoardSize, Level], [Board, white, GameMode], 'DNF', WhiteMoves).
-game_loop([1, BoardSize, Level], [Board, white, GameMode], 'DNF', []) :-
-    valid_moves([Board, black, GameMode], BlackMoves),
-    BlackMoves \= [],
-    game_loop([1, BoardSize, Level], [Board, black, GameMode], 'DNF', BlackMoves).
 game_loop([1, BoardSize, Level], GameState, 'DNF', ListOfMoves):-
-    display_game(GameState),
     ListOfMoves \= [],
+    !,
+
+    display_game(GameState),
 
     write('Available pieces:\n'),
     getPiecesFromValidMoves(ListOfMoves, RemainingPieces),
@@ -94,8 +74,30 @@ game_loop([1, BoardSize, Level], GameState, 'DNF', ListOfMoves):-
 
     game_over(NewGameState, Winner),
     valid_moves(NewGameState, NextMoves),
-    write(Winner), nl,
     game_loop([1, BoardSize, Level], NewGameState, Winner, NextMoves).
+game_loop([1, BoardSize, Level], [Board, black, GameMode], 'DNF', []) :-
+    valid_moves([Board, white, GameMode], WhiteMoves),
+    WhiteMoves \= [],
+    !,
+    game_loop([1, BoardSize, Level], [Board, white, GameMode], 'DNF', WhiteMoves).
+game_loop([1, BoardSize, Level], [Board, white, GameMode], 'DNF', []) :-
+    valid_moves([Board, black, GameMode], BlackMoves),
+    BlackMoves \= [],
+    !,
+    game_loop([1, BoardSize, Level], [Board, black, GameMode], 'DNF', BlackMoves).
+game_loop(_, [Board, _, _], 'draw', _) :-
+    display_board(Board),
+    write('Game ended with a tie!\n'),
+    calculate_score(Board, black, Score),
+    format('Final Score: ~w\n', [Score]).
+game_loop(_, [Board, _, _], Winner, _) :-
+    Winner \= 'DNF',
+    Winner \= 'draw',
+    !,
+    display_board(Board),
+    format('Game over! Winner: ~w\n', [Winner]),
+    calculate_score(Board, Winner, Score),
+    format('Final Score: ~w\n', [Score]).
 
 % ----------- initial_state(+GameConfig)
 % Receives game configuration and returns the initial game state (player with the black pieces is starting for now but we can change this later)
@@ -106,6 +108,9 @@ initial_state([GameMode, BoardSize, _], [Board, black, GameMode]) :-
 % Receives game state and displays current player and board
 display_game([Board, CurrentPlayer, _]):-
     write('\nCurrent Player: '), write(CurrentPlayer), nl,
+    display_board(Board).
+
+display_board(Board) :-
     write('Board:\n\n'),
     length(Board, Length),
     show_board(Board, Length),
@@ -255,21 +260,19 @@ valid_moves_aux(Board, BoardSize, [_|Pieces], Moves) :-
 
 % ----------- game_over(+GameState, -Winner)
 % Checks if the game is over, this means checking if both players are out of valid moves, if so, the winner is calculated
+game_over(GameState, Winner) :-
+    GameState = [Board, _, _],
+    valid_moves([Board, white, _], WhiteMoves),
+    valid_moves([Board, black, _], BlackMoves),
+    game_over_aux(WhiteMoves, BlackMoves, Board, Winner).
 
-game_over([Board, _, _], 'DNF') :-
-    valid_moves([Board, white, _], WhiteMoves),
-    valid_moves([Board, black, _], BlackMoves),
-    WhiteMoves \= [],
-    BlackMoves \= [].
-game_over([Board, _, _], Winner):-
-    valid_moves([Board, white, _], WhiteMoves),
-    valid_moves([Board, black, _], BlackMoves),
-    WhiteMoves = [],
-    BlackMoves = [], !,
+game_over_aux([], [], Board, Winner) :-
     calculate_score(Board, white, ScoreWhite),
     calculate_score(Board, black, ScoreBlack),
-    winner_is(ScoreBlack, ScoreWhite, Winner),
-    write(Winner), nl.
+    winner_is(ScoreBlack, ScoreWhite, Winner).
+game_over_aux(_, _, _, 'DNF').
+
+
 
 winner_is(ScoreBlack, ScoreWhite, 'black'):- ScoreBlack > ScoreWhite.
 winner_is(ScoreBlack, ScoreWhite, 'white'):- ScoreWhite > ScoreBlack.
