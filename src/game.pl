@@ -18,7 +18,13 @@ play :-
     write('\nPick the number of pieces per side of the board (6, 8 or 10):\n'),
     valid_input([6, 8, 10], PiecesPerSide),
     BoardSize is PiecesPerSide + 2,
-    game([GameMode, BoardSize, Level]).
+
+    write('\nPick the scoring system (standard or product):\n'),
+    write('1. Standard\n'),
+    write('2. Product\n'),
+    valid_input([1,2], ScoreSystem),
+
+    game([GameMode, BoardSize, Level, ScoreSystem]).
 
 
 % Por agora nao faz nada
@@ -38,7 +44,7 @@ game(GameConfig):-
 
 % ----------- game_loop(+GameConfig, +GameState)
 % starts the game loop with given config
-game_loop([1, BoardSize, Level], GameState):-
+game_loop([1, BoardSize, Level, ScoreSystem], GameState):-
     display_game(GameState),
 
     % Escolher uma das peças restantes
@@ -63,12 +69,12 @@ game_loop([1, BoardSize, Level], GameState):-
     % Fazer o movimento para essa peça
     move(GameState, SelectedPiece, SelectedMove, NewGameState),
 
-    game_loop([1, BoardSize, Level], NewGameState).
+    game_loop([1, BoardSize, Level, ScoreSystem], NewGameState).
 
 
 % ----------- initial_state(+GameConfig)
 % Receives game configuration and returns the initial game state (player with the black pieces is starting for now but we can change this later)
-initial_state([GameMode, BoardSize, _], [Board, black, GameMode]) :-
+initial_state([GameMode, BoardSize, _, _], [Board, black, GameMode]) :-
     generate_board(BoardSize, Board).
 
 % ----------- display_game(+GameState)

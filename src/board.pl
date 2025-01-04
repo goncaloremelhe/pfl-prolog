@@ -37,7 +37,7 @@ alternating_marble(_, _, white).
 % returns the char corresponding to piece with name Name
 piece(black,'B').
 piece(white,'W').
-piece(empty,'0').
+piece(empty,'.').
 piece(blocked,'X').
 piece(placeholder, 'P').
 piece(corner, 'C').
