@@ -124,6 +124,10 @@ Which shows up like this in the terminal:
 
 ### Move Representation
 
+As a player, to successfully make a move on the board, first, a marble should be chosen, this is done by entering the coordinates of the marble when prompted in the format X-Y. Since in Mabula each marble can only move in one direction, the next step is to enter the coordinates of the desired destination of the marble in the same format (X-Y), if the move is legal and available, the marble will move to the position, pushing others if they are in its way.
+
+Internally, the move/3 predicate 
+
 
 ### User Interaction
 
