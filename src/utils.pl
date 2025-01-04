@@ -123,3 +123,12 @@ max_list_our([X], X).
 max_list_our([Head|Tail], Max) :-
     max_list_our(Tail, TailMax),
     Max is max(Head, TailMax).
+
+
+% ----------- foldl_our(+Pred, +List, +Acc0, -Acc) ----------- 
+% Applies Pred to each element of List and the accumulator Acc0.
+% Resulting in Acc after processing all elements.
+foldl_our(_, [], Acc, Acc). 
+foldl_our(Pred, [Head|Tail], Acc0, Acc) :-
+    call(Pred, Head, Acc0, Acc1),
+    foldl_our(Pred, Tail, Acc1, Acc).  
