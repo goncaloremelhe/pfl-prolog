@@ -94,36 +94,60 @@ The game states are represented as lists of 3 elements:
 - CurrPlayer - The player currently playing - black for black marbles or white for white marbles
 - GameMode - The type of game being played, described above.
 
-An initial game state where the black player goes first in a Person vs Person Scenario is represented as:
+An initial game state where the black player goes first is represented as:
 
-```prolog
-[Board, black, 1]
+```bash
+Current Player: black
+Board:
+
+8    W B W B W B   
+7  W . . . . . . B 
+6  B . . . . . . W 
+5  W . . . . . . B 
+4  B . . . . . . W 
+3  W . . . . . . B 
+2  B . . . . . . W 
+1    B W B W B W   
+
+   1 2 3 4 5 6 7 8
 ```
 
-Which shows up like this in the terminal:
 
-(meter)
+An intermediate game state where the white player is currently playing is represented as:
 
+```bash
+Current Player: white
+Board:
 
-An intermediate game state where the white player is currently playing in a Person vs Computer Scenario is represented as:
+8  X B W X X B W X 
+7  X . . B . . . X 
+6  W . . . W . . W 
+5  X . W . . . B X 
+4  X . . . . W . X 
+3  W . . B . . . B 
+2  X . . . B . . X 
+1  X B W X X B W X 
 
-```prolog
-[Board, white, 2]
+   1 2 3 4 5 6 7 8
 ```
 
-Which shows up like this in the terminal:
+A final game state where the white player is currently playing is represented as:
 
-(meter)
+```bash
+Current Player: white
+Board:
 
-A final game state where the black player is currently playing in a Person vs Person Scenario is represented as:
+8  X X X X X W X X 
+7  X . . B B B . X 
+6  X . W . W W B X 
+5  X B B B B B W X 
+4  X . . W W B W X 
+3  X . . B W W W X 
+2  X . . B . W . X 
+1  X X X X X X X X 
 
-```prolog
-[Board, black, 1]
+   1 2 3 4 5 6 7 8
 ```
-
-Which shows up like this in the terminal:
-
-(meter)
 
 
 ### Move Representation
