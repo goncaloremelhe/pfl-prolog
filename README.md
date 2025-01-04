@@ -74,9 +74,18 @@ Board1 = [
 
 In contrast, this is the board displayed to the user, it also includes coordinates and is less wordy and more illustrative:
 
+```bash
+8  X X X X X W X X 
+7  X . . B B B . X 
+6  X . W . W W B X 
+5  X B B B B B W X 
+4  X . . W W B W X 
+3  X . . B W W W X 
+2  X . . B . W . X 
+1  X X X X X X X X 
 
-(meter exemplo da representacao externa) (com pontos em vez de 0s maybe)
-
+   1 2 3 4 5 6 7 8
+```
 
 ### Internal Game State
 
