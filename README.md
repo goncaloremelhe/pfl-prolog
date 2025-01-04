@@ -51,7 +51,7 @@ For a more detailed overview of the rulebook and gameplay mechanics, visit the f
 The game configuration is represented as a list of 3 elements:
 - GameMode - Can be represented by numbers 1, 2, 3 or 4. It stores the type of game to be played, 1 meaning Person vs. Person, 2 meaning Person vs. Computer, 3 being Computer vs. Person and 4 being Computer vs. Computer.
 - BoardSize - Stores the size of the board, which is calculated depending on the number of marbles the player wants to play with.
-- Level - Represents the level of expertise of the Computer, 1 being Easy and 2 being Intermediate. (TODO) On Level 1, the computer randomly chooses one of the available moves, on Level 2 the Computer chooses its play based on what yields a greater value (greedy strategy)
+- Level - Represents the level of expertise of the Computer, 1 being Easy and 2 being Hard. (TODO) On Level 1, the computer randomly chooses one of the available moves, on Level 2 the Computer chooses its play based on what yields a greater value (greedy strategy)
 
 The GameConfiguration is then passed to the initial_state/2 predicate, which generates the game board based on BoardSize and stores that Board and the GameMode in the first Game State.
 
