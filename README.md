@@ -38,6 +38,7 @@ For a more detailed overview of the rulebook and gameplay mechanics, visit the f
     - Hard: The computer evaluates the board and selects the best possible move using a greedy/bruteforce (TODO) strategy
 - Different Board Sizes:
     - 8x8, 10x10 or 12x12
+
 (TODO)
 - Two different scoring systems:
     - Standard : The player with the largest orthogonally connected group of marbles wins.
@@ -126,9 +127,18 @@ Which shows up like this in the terminal:
 
 ### User Interaction
 
+Upon starting the game, a menu is displayed to the user, where they are prompted to choose which game mode they want, then they can also choose the number of marbles they want to play with, which will determine the size of the board, after this, they can start playing.
+The menu inputs are validated by checking the user's choice against a predefined list of valid options. Invalid inputs prompt re-entry using a repeat loop until a valid selection is made.
+
+During gameplay, move validation uses the predicate valid_input_options/2. The input is parsed with parse_move_code/3 to extract row and column values in the format Row-Col. These are converted to numbers, reassembled as an atom, and checked against allowed moves (Options). The repeat predicate ensures only valid moves are accepted, looping until the input matches the rules. This guarantees consistency and prevents errors.
+
 
 ## Conclusions
 
+The work carried out allowed for a deeper understanding of the language. Nonetheless, it was a challenging process, made more difficult by the limited time available to familiarize ourselves with the language and the lack of extensive resources.
+As for known issues, we acknowledge that we were supposed to let users pick the length and width of the board, but this was too difficult to implement in our game. This complexity arose partly because we also did not implement the feature to place marbles randomly while adhering to specific rules: no more than two marbles in a row (including corners) and ensuring an equal number of marbles for each player. The interplay between these requirements proved challenging to manage, and with the limited time and resources available, we were unable to develop a robust solution for these features.
+
+(podemos muda risto depois lol se conseguirmos fazer) ^ 
 
 ## Bibliography
 To aid the development of this project, the following resources were consulted:
