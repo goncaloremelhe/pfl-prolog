@@ -154,7 +154,8 @@ Board:
 
 As a player, to successfully make a move on the board, first, a marble should be chosen, this is done by entering the coordinates of the marble when prompted in the format X-Y. Since in Mabula each marble can only move in one direction, the next step is to enter the coordinates of the desired destination of the marble in the same format (X-Y), if the move is legal and available, the marble will move to the position, pushing others if they are in its way.
 
-Internally, the move/3 predicate 
+Internally, the move/3 predicate only calls move_pieces\4, which handles validation for the move input by the user, e.g. checking if the move is inside the bounds of the board and if the user can move to that position. If the verification is successful, the function
+move_piece_recursively/5 is called, this is where the actual movement logic happens.
 
 
 ### User Interaction
