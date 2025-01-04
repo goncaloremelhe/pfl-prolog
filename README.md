@@ -49,9 +49,9 @@ For a more detailed overview of the rulebook and gameplay mechanics, visit the f
 ### Game Configuration Representation
 
 The game configuration is represented as a list of 3 elements:
-    - GameMode - Can be represented by numbers 1, 2, 3 or 4. It stores the type of game to be played, 1 meaning Person vs. Person, 2 meaning Person vs. Computer, 3 being Computer vs. Person and 4 being Computer vs. Computer.
-    - BoardSize - Stores the size of the board, which is calculated depending on the number of marbles the player wants to play with.
-    - Level - Represents the level of expertise of the Computer, 1 being Easy and 2 being Intermediate. (TODO) On Level 1, the computer randomly chooses one of the available moves, on Level 2 the Computer chooses its play based on what yields a greater value (greedy strategy)
+- GameMode - Can be represented by numbers 1, 2, 3 or 4. It stores the type of game to be played, 1 meaning Person vs. Person, 2 meaning Person vs. Computer, 3 being Computer vs. Person and 4 being Computer vs. Computer.
+- BoardSize - Stores the size of the board, which is calculated depending on the number of marbles the player wants to play with.
+- Level - Represents the level of expertise of the Computer, 1 being Easy and 2 being Intermediate. (TODO) On Level 1, the computer randomly chooses one of the available moves, on Level 2 the Computer chooses its play based on what yields a greater value (greedy strategy)
 
 The GameConfiguration is then passed to the initial_state/2 predicate, which generates the game board based on BoardSize and stores that Board and the GameMode in the first Game State.
 
@@ -86,9 +86,9 @@ In contrast, this is the board displayed to the user, it also includes coordinat
 ### Internal Game State
 
 The game states are represented as lists of 3 elements:
-    - Board - The current state of the game board, it is a list of lists containing the marbles, the empty spaces and the blocked spaces (places where the marbles can't be moved to).
-    - CurrPlayer - The player currently playing - black for black marbles or white for white marbles
-    - GameMode - The type of game to be played, described above.
+- Board - The current state of the game board, it is a list of lists containing the marbles, the empty spaces and the blocked spaces (places where the marbles can't be moved to).
+- CurrPlayer - The player currently playing - black for black marbles or white for white marbles
+- GameMode - The type of game to be played, described above.
 
 An initial game state where the black player goes first in a Person vs Person Scenario is represented as:
 
