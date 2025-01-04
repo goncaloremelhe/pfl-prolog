@@ -101,6 +101,25 @@ invertList_aux([],L,L).
 invertList_aux([H|T],Acc,Inv):-
     invertList_aux(T,[H|Acc],Inv).
 
+% ----------- convert_to_options(+Tuples, -Options)
+% Converts a list of (Row, Column) tuples into a list of Row-Col atoms
+convert_to_options([], []).
+convert_to_options([(Row, Col)|RestTuples], [Option|RestOptions]) :-
+    number_codes(Row, RowCodes),
+    number_codes(Col, ColCodes),
+    append(RowCodes, [45|ColCodes], OptionCodes),
+    atom_codes(Option, OptionCodes),
+    convert_to_options(RestTuples, RestOptions).
 
+subtract_our([], _, []).
+subtract_our([X|Tail], List2, [X|Result]) :-
+    \+ member(X, List2),
+    subtract_our(Tail, List2, Result).
+subtract_our([X|Tail], List2, Result) :-
+    member(X, List2),
+    subtract_our(Tail, List2, Result).
 
-
+max_list_our([X], X).
+max_list_our([Head|Tail], Max) :-
+    max_list_our(Tail, TailMax),
+    Max is max(Head, TailMax).
