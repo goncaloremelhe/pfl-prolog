@@ -16,14 +16,13 @@ play :-
     difficultyLevel(GameMode, Level),
 
     write('\nPick the number of pieces per side of the board (6, 8 or 10):\n'),
-    valid_input([6, 8, 10], PiecesPerSide),
+    valid_input([2,4, 6, 8, 10], PiecesPerSide),
     BoardSize is PiecesPerSide + 2,
-
+    
     write('\nPick the scoring system (standard or product):\n'),
     write('1. Standard\n'),
     write('2. Product\n'),
     valid_input([1,2], ScoreSystem),
-
     game([GameMode, BoardSize, Level, ScoreSystem]).
 
 
@@ -39,28 +38,37 @@ difficultyLevel(GameMode, Level):-
 
 game(GameConfig):-
     initial_state(GameConfig, GameState),
-    game_loop(GameConfig, GameState).
+    valid_moves(GameState, ListOfMoves),
+    game_loop(GameConfig, GameState, 'DNF', ListOfMoves).
 
+
+getMovesFromValidMoves([], '').
+getMovesFromValidMoves([(Piece,Move)|_], Piece, Move).
+getMovesFromValidMoves([_|Moves], Piece, Move) :-
+    getMovesFromValidMoves(Moves, Piece, Move).
+
+getPiecesFromValidMoves([], []).
+getPiecesFromValidMoves([(Piece, _)|Moves], [Piece|Pieces]):-
+    getPiecesFromValidMoves(Moves,Pieces).
 
 % ----------- game_loop(+GameConfig, +GameState)
 % starts the game loop with given config
-game_loop([1, BoardSize, Level, ScoreSystem], GameState):-
+
+game_loop([1, BoardSize, Level, ScoreSystem], GameState, 'DNF', ListOfMoves):-
+    ListOfMoves \= [],
+    !,
+
     display_game(GameState),
 
-    % Escolher uma das peças restantes
-    get_remaining_pieces(GameState, RemainingPieces),
     write('Available pieces:\n'),
-    convert_to_options(RemainingPieces, Options),
-    print_options(Options),
+    getPiecesFromValidMoves(ListOfMoves, RemainingPieces),
+    print_options(RemainingPieces),
     write('Choose a piece to move (e.g., 1-2):\n'),
-    valid_input_options(Options, SelectedPiece),
+    valid_input_options(RemainingPieces, SelectedPiece),
     format('You chose: ~w\n', [SelectedPiece]),
 
-    % Escolher um move para essa peça
-    parse_move_code(SelectedPiece, Row, Col),
-    get_piece_moves(GameState, BoardSize, (Row,Col), Moves),
     write('Possible moves for this piece:\n'), 
-    convert_to_options(Moves, MoveOptions),
+    getMovesFromValidMoves(ListOfMoves, SelectedPiece, MoveOptions),
     print_options(MoveOptions),
     write('Choose a move to that piece (e.g., 1-2):\n'),
     valid_input_options(MoveOptions, SelectedMove),
@@ -69,8 +77,32 @@ game_loop([1, BoardSize, Level, ScoreSystem], GameState):-
     % Fazer o movimento para essa peça
     move(GameState, SelectedPiece, SelectedMove, NewGameState),
 
-    game_loop([1, BoardSize, Level, ScoreSystem], NewGameState).
-
+    game_over(NewGameState, Winner),
+    valid_moves(NewGameState, NextMoves),
+    game_loop([1, BoardSize, Level, ScoreSystem], NewGameState, Winner, NextMoves).
+game_loop([1, BoardSize, Level, ScoreSystem], [Board, black, GameMode], 'DNF', []) :-
+    valid_moves([Board, white, GameMode], WhiteMoves),
+    WhiteMoves \= [],
+    !,
+    game_loop([1, BoardSize, Level, ScoreSystem], [Board, white, GameMode], 'DNF', WhiteMoves).
+game_loop([1, BoardSize, Level, ScoreSystem], [Board, white, GameMode], 'DNF', []) :-
+    valid_moves([Board, black, GameMode], BlackMoves),
+    BlackMoves \= [],
+    !,
+    game_loop([1, BoardSize, Level, ScoreSystem], [Board, black, GameMode], 'DNF', BlackMoves).
+game_loop(_, [Board, _, _], 'draw', _) :-
+    display_board(Board),
+    write('Game ended with a tie!\n'),
+    calculate_score(Board, black, Score),
+    format('Final Score: ~w\n', [Score]).
+game_loop(_, [Board, _, _], Winner, _) :-
+    Winner \= 'DNF',
+    Winner \= 'draw',
+    !,
+    display_board(Board),
+    format('Game over! Winner: ~w\n', [Winner]),
+    calculate_score(Board, Winner, Score),
+    format('Final Score: ~w\n', [Score]).
 
 % ----------- initial_state(+GameConfig)
 % Receives game configuration and returns the initial game state (player with the black pieces is starting for now but we can change this later)
@@ -81,6 +113,9 @@ initial_state([GameMode, BoardSize, _, _], [Board, black, GameMode]) :-
 % Receives game state and displays current player and board
 display_game([Board, CurrentPlayer, _]):-
     write('\nCurrent Player: '), write(CurrentPlayer), nl,
+    display_board(Board).
+
+display_board(Board) :-
     write('Board:\n\n'),
     length(Board, Length),
     show_board(Board, Length),
@@ -124,16 +159,6 @@ matches_piece(Board, Player, (Row, Col)) :-
     Y is Size - Row + 1,
     nth1(Y, Board, BoardRow),
     nth1(Col, BoardRow, Player).
-
-% ----------- convert_to_options(+Tuples, -Options)
-% Converts a list of (Row, Column) tuples into a list of Row-Col atoms
-convert_to_options([], []).
-convert_to_options([(Row, Col)|RestTuples], [Option|RestOptions]) :-
-    number_codes(Row, RowCodes),
-    number_codes(Col, ColCodes),
-    append(RowCodes, [45|ColCodes], OptionCodes),
-    atom_codes(Option, OptionCodes),
-    convert_to_options(RestTuples, RestOptions).
 
 % ----------- print_Coords(+CurrIndex, +Length)
 % Print the coordinates from 1 to Length
@@ -189,24 +214,28 @@ calculate_left_perimeter_moves(_, 0, []).
 calculate_left_perimeter_moves(Row, Count, [(Row, Col)|Moves]) :-
     Col is Count + 1,
     NewCount is Count - 1, 
+    NewCount >= 0,
     calculate_left_perimeter_moves(Row, NewCount, Moves).
 
 calculate_right_perimeter_moves(_, _, 0, []).
 calculate_right_perimeter_moves(Row, BoardMax, Count, [(Row, Col)|Moves]) :-
     Col is BoardMax - Count,
     NewCount is Count - 1,
+    NewCount >= 0,
     calculate_right_perimeter_moves(Row, BoardMax, NewCount, Moves).
 
 calculate_bottom_perimeter_moves(_, 0, []).
 calculate_bottom_perimeter_moves(Col, Count, [(Row, Col)|Moves]) :-
     Row is Count + 1,
     NewCount is Count - 1, 
+    NewCount >= 0,
     calculate_bottom_perimeter_moves(Col, NewCount, Moves).
 
 calculate_top_perimeter_moves(_, _, 0, []).
 calculate_top_perimeter_moves(Col, BoardMax, Count, [(Row, Col)|Moves]) :-
     Row is BoardMax - Count,
     NewCount is Count - 1,
+    NewCount >= 0,
     calculate_top_perimeter_moves(Col, BoardMax, NewCount, Moves).
 
 move([Board, black, _],  SelectedPiece, SelectedMove, [NewBoard, white, _]):-
@@ -218,20 +247,41 @@ move([Board, white, _],  SelectedPiece, SelectedMove, [NewBoard, black, _]):-
 
 % ----------- valid_moves(+GameState, -ListOfMoves)
 % Retrieves all valid moves for the current player
-% TODO
+valid_moves([Board, CurrentPlayer, _], ListOfMoves) :-
+    get_remaining_pieces([Board, CurrentPlayer, _], TempRemainingPieces),
+    length(Board, BoardSize),
+    convert_to_options(TempRemainingPieces, RemainingPieces),
+    valid_moves_aux(Board, BoardSize, RemainingPieces, ListOfMoves).
+
+valid_moves_aux(_, _, [], []).
+valid_moves_aux(Board, BoardSize, [Piece|Pieces], [(Piece,Move)|Moves]) :-
+    parse_move_code(Piece, Row, Col),
+    get_piece_moves([Board, _, _], BoardSize, (Row, Col), TempMove),
+    convert_to_options(TempMove, Move),
+    Move \= [],
+    valid_moves_aux(Board, BoardSize, Pieces, Moves).
+valid_moves_aux(Board, BoardSize, [_|Pieces], Moves) :-
+    valid_moves_aux(Board, BoardSize, Pieces, Moves).
 
 % ----------- game_over(+GameState, -Winner)
 % Checks if the game is over, this means checking if both players are out of valid moves, if so, the winner is calculated
-game_over([Board, _, _], Winner):-
-    valid_moves([Board, white, _], []),
-    valid_moves([Board, black, _], []),
+game_over(GameState, Winner) :-
+    GameState = [Board, _, _],
+    valid_moves([Board, white, _], WhiteMoves),
+    valid_moves([Board, black, _], BlackMoves),
+    game_over_aux(WhiteMoves, BlackMoves, Board, Winner).
+
+game_over_aux([], [], Board, Winner) :-
     calculate_score(Board, white, ScoreWhite),
     calculate_score(Board, black, ScoreBlack),
     winner_is(ScoreBlack, ScoreWhite, Winner).
+game_over_aux(_, _, _, 'DNF').
 
-winner_is(ScoreBlack, ScoreWhite, black):- ScoreBlack > ScoreWhite.
-winner_is(ScoreBlack, ScoreWhite, white):- ScoreWhite > ScoreBlack.
-winner_is(ScoreBlack, ScoreWhite, draw):- ScoreBlack =:= ScoreWhite.
+
+
+winner_is(ScoreBlack, ScoreWhite, 'black'):- ScoreBlack > ScoreWhite.
+winner_is(ScoreBlack, ScoreWhite, 'white'):- ScoreWhite > ScoreBlack.
+winner_is(ScoreBlack, ScoreWhite, 'draw'):- ScoreBlack =:= ScoreWhite.
 
 
 % ------------ calculate_score(+Board, +Player, -Score)
@@ -262,7 +312,7 @@ dfs([Current|Stack], Pieces, [Current|Group], Remaining) :-
     findall(Neighbor, 
             (member(Neighbor, Pieces), adjacent(Current, Neighbor)), 
             Neighbors), % Find all unvisited neighbors.
-    subtract(Pieces, Neighbors, NewPieces), % Remove Neighbors from Pieces.
+    subtract_our(Pieces, Neighbors, NewPieces), % Remove Neighbors from Pieces.
     append(Neighbors, Stack, NewStack), % Add Neighbors to the stack.
     dfs(NewStack, NewPieces, Group, Remaining). % Continue DFS.
 
@@ -278,7 +328,7 @@ adjacent((Row, Col), (R, C)) :-
 % find the group with the largest size -> standard scoring
 biggest_group(Groups, Size) :-
     findall(Length, (member(Group, Groups), length(Group, Length)), Lengths),
-    max_list(Lengths, Size).
+    max_list_our(Lengths, Size).
 
 % Multiply the sizes of all groups -> product scoring
 multiply_groups(Groups, Product) :-
@@ -289,7 +339,7 @@ multiply(X, Y, Z) :- Z is X * Y.
 
 
 %-------------- find_player_pieces(+Board, +Player, -ListOfPieces)
-% Finds all coordinates of the specified Player's pieces on the Board.
+% Finds all coordinates of the specified Players pieces on the Board.
 find_player_pieces(Board, Player, ListOfPieces) :-
     findall((Row, Col),
             (nth0(Row, Board, RowList),
@@ -298,34 +348,8 @@ find_player_pieces(Board, Player, ListOfPieces) :-
 
 
 
-test_game_over:-
-
-
+test_game_over:-  
 Board1 = [
-    [blocked, black,   white,   black,   white,   black,   white,   blocked],
-    [black,   empty,   empty,   empty,   empty,   empty,   empty,   black],
-    [white,   empty,   empty,   empty,   empty,   white,   empty,   white],
-    [black,   empty,   empty,   empty,   empty,   empty,   empty,   black],
-    [white,   empty,   empty,   empty,   empty,   empty,   empty,   white],
-    [black,   empty,   empty,   empty,   empty,   empty,   empty,   black],
-    [white,   empty,   empty,   empty,   empty,   empty,   empty,   white],
-    [blocked, black,   white,   black,   white,   black,   white,   blocked]
-
-],
-
-Board2 = [
-    [blocked, black,   white,   blocked, blocked, black,   white,   blocked],
-    [blocked, empty,   empty,   black,   empty,   empty,   empty,   blocked],
-    [white,   empty,   empty,   empty,   white,   empty,   empty,   white],
-    [blocked, empty,   white,   empty,   empty,   empty,   black,   blocked],
-    [blocked, empty,   empty,   empty,   empty,   white,   empty,   blocked],
-    [white,   empty,   empty,   black,   empty,   empty,   empty,   black],
-    [blocked, empty,   empty,   empty,   black,   empty,   empty,   blocked],
-    [blocked, black,   white,   blocked, blocked, black,   white,   blocked]
-],
-
- 
-Board3 = [
     [blocked, blocked, blocked, blocked, blocked, white,   blocked, blocked],
     [blocked, empty,   empty,   black,   black,   black,   empty,   blocked],
     [blocked, empty,   white,   empty,   white,   white,   black,   blocked],
@@ -336,7 +360,26 @@ Board3 = [
     [blocked, blocked, blocked, blocked, blocked, blocked, blocked, blocked]
 ],
 
-length(Board2, Length),
-show_board(Board2, Length),
-write('\n  '),
-print_Coords(1, Length).
+
+valid_moves([Board1, white, _], P),
+write(P).
+
+
+test_game_over1:-  
+Board1 = [
+    [blocked, blocked, blocked, blocked, blocked, white,   blocked, blocked],
+    [black, empty,   empty,   black,   black,   empty,   empty,   blocked],
+    [blocked, empty,   white,   empty,   white,   white,   black,   blocked],
+    [blocked, black,   black,   black,   black,   black,   white,   blocked],
+    [white, empty,   empty,   white,   white,   black,   white,   blocked],
+    [blocked, empty,   empty,   black,   white,   white,   white,   blocked],
+    [blocked, empty,   empty,   black,   empty,   white,   empty,   blocked],
+    [blocked, blocked, blocked, blocked, blocked, blocked, blocked, blocked]
+],
+
+
+valid_moves([Board1, white, _], P),
+valid_moves([Board1, black, _], P1),
+
+write(P),
+nl, write(P1).
