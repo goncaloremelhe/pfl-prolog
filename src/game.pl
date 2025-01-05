@@ -129,6 +129,16 @@ game_loop([3, BoardSize, Level], GameState, 'DNF', ListOfMoves) :-
     game_over(NewGameState, Winner),
     valid_moves(NewGameState, NextMoves),
     game_loop([3, BoardSize, Level], NewGameState, Winner, NextMoves).
+game_loop([4, BoardSize, Level], GameState, 'DNF', ListOfMoves) :-
+    ListOfMoves \= [],
+    !,
+    display_game(GameState),
+    %sleep(1),
+    choose_move(GameState, Level, Move),
+    move(GameState, Move, NewGameState),
+    game_over(NewGameState, Winner),
+    valid_moves(NewGameState, NextMoves),
+    game_loop([4, BoardSize, Level], NewGameState, Winner, NextMoves).
 game_loop([1, BoardSize, Level], GameState, 'DNF', ListOfMoves):-
     ListOfMoves \= [],
     !,
