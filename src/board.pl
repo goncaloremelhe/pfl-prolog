@@ -1,4 +1,5 @@
 :- use_module(library(lists)).
+:- use_module(library(random)).
 :-consult('utils.pl').
 
 % ----------- generate_board(+Size, -Board)

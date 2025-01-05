@@ -1,4 +1,5 @@
 :- use_module(library(lists)).
+:- use_module(library(random)).
 
 % ----------- read_number(+X)
 % Reads number input from user and converts it to an integer, X is unified with said integer.
