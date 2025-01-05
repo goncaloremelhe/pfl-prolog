@@ -5,13 +5,20 @@
 - Group: 4
 - Members:
     - Gonçalo Remelhe, 202205318 (50%) - Implemented....
-    - Joana Noites, 202206284 (50%) - Implemented base board structure, calculating score, 
+    - Joana Noites, 202206284 (50%) - Implemented base board structure, calculating score,....
 
-## Instalation:
-1. Ensure that SICStus is installed.
-2. Clone/Download the repository
+## Installation (through SICStus executable) - Windows and Linux
+1. Ensure that SICStus is installed and licensed.
+2. Clone/Download the repository.
 4. Open Sicstus and use consult comand: consult(your_path/game.pl).
 5. Finally type 'play.'
+
+## Installation (through the terminal) - Windows and Linux
+1. Ensure that SICStus is installed and licensed.
+2. Clone/Download the repository.
+3. Open your terminal and run the command: rlwrap your_path/bin/sicstus.
+4. Now run the consult command: consult(your_path/game.pl).
+6. Finally type 'play.'
 
 ## Description:
 
@@ -175,7 +182,7 @@ A potential improvement would involve enhancing the presentation of the game by 
 ## Bibliography
 To aid the development of this project, the following resources were consulted:
 
-- [BoardGameGeek Page for the Mabula Game](https://boardgamegeek.com/boardgame/346743/mabula)
+- [BoardGameGeek Page for Mabula](https://boardgamegeek.com/boardgame/346743/mabula)
 - [Steffen Spiele's Official page for Mabula](https://steffen-spiele.com/products/mabula)
 - [Official Mabula Rule Book](https://cdn.shopify.com/s/files/1/0760/5141/5360/files/Mabula_All.pdf?v=1694099117)
 - [The SWI-Prolog Library](https://eu.swi-prolog.org/pldoc/man?section=libpl)
