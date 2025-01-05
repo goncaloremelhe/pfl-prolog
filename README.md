@@ -50,7 +50,7 @@ For a more detailed overview of the rulebook and gameplay mechanics, visit the f
     - Easy: The computer randomly selects its pieces and moves.
     - Hard: The computer evaluates the board and selects the best possible move using a greedy strategy
 - Different Board Sizes:
-    - 8x8, 10x10 or 12x12
+    - from 7x7 to 11x11
 - Two different scoring systems:
     - Standard : The player with the largest orthogonally connected group of marbles wins.
     - Product: The player with the largest product of the sizes of all their orthogonally connected group of marbles wins.
