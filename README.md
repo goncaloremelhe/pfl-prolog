@@ -10,22 +10,21 @@
 ## Installation (through SICStus executable) - Windows and Linux
 1. Ensure that SICStus is installed and licensed.
 2. Clone/Download the repository.
-4. Open Sicstus and use consult comand: consult(your_path/src/game).
-5. Finally type 'play.'
+3. Open Sicstus and use consult comand: consult(your_path/src/game).
+4. Finally type 'play.'
 
 ## Installation (through the terminal) - Windows
 1. Ensure that SICStus is installed and licensed.
 2. Clone/Download the repository.
 3. Open your terminal in the directory of the repository and run: siscstus -l src/game.pl
-4. Now run the consult command: consult(your_path/src/game).
-6. Finally type 'play.'
+4. Finally type 'play.'
 
 ## Installation (through the terminal) - Linux
 1. Ensure that SICStus is installed and licensed.
 2. Clone/Download the repository.
 3. Open your terminal and run the command: rlwrap your_path/bin/sicstus.
 4. Now run the consult command: consult(your_path/src/game).
-6. Finally type 'play.'
+5. Finally type 'play.'
 
 ## Description:
 
@@ -88,14 +87,14 @@ Board1 = [
 In contrast, this is the board displayed to the user, it also includes coordinates and is less wordy and more illustrative:
 
 ```bash
-8  X X X X X W X X 
+8    X X X X W X  
 7  X . . B B B . X 
 6  X . W . W W B X 
 5  X B B B B B W X 
 4  X . . W W B W X 
 3  X . . B W W W X 
 2  X . . B . W . X 
-1  X X X X X X X X 
+1    X X X X X X  
 
    1 2 3 4 5 6 7 8
 ```
