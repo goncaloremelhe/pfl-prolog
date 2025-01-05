@@ -126,14 +126,14 @@ An intermediate game state where the white player is currently playing is repres
 Current Player: white
 Board:
 
-8  X B W X X B W X 
+8    B W X X B W  
 7  X . . B . . . X 
 6  W . . . W . . W 
 5  X . W . . . B X 
 4  X . . . . W . X 
 3  W . . B . . . B 
 2  X . . . B . . X 
-1  X B W X X B W X 
+1    B W X X B W  
 
    1 2 3 4 5 6 7 8
 ```
@@ -144,14 +144,14 @@ A final game state where the white player is currently playing is represented as
 Current Player: white
 Board:
 
-8  X X X X X W X X 
+8    X X X X W X  
 7  X . . B B B . X 
 6  X . W . W W B X 
 5  X B B B B B W X 
 4  X . . W W B W X 
 3  X . . B W W W X 
 2  X . . B . W . X 
-1  X X X X X X X X 
+1    X X X X X X  
 
    1 2 3 4 5 6 7 8
 ```
