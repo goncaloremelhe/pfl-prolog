@@ -4,8 +4,8 @@
 - Game: Mabula
 - Group: 4
 - Members:
-    - Gonçalo Remelhe, 202205318 (50%) - Implemented....
-    - Joana Noites, 202206284 (50%) - Implemented....
+    - Gonçalo Remelhe, 202205318 (50%) - Implemented move, choose_move, value, valid_moves
+    - Joana Noites, 202206284 (50%) - Implemented game_over, display_game, initial_state
 
 ## Installation (through SICStus executable) - Windows and Linux
 1. Ensure that SICStus is installed and licensed.
