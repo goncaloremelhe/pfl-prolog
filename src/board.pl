@@ -1,6 +1,7 @@
 :- use_module(library(lists)).
 :- use_module(library(random)).
 :-consult('utils.pl').
+:-consult('random_marbles.pl').
 
 % ----------- generate_board(+Size, -Board)
 % Generates the board in its initial state, a square of size Size
