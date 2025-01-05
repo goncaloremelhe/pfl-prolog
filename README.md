@@ -35,7 +35,7 @@ For a more detailed overview of the rulebook and gameplay mechanics, visit the f
 - Visual indication of valid pieces and moves - This helps new users by printing on the game the valid pieces to move as well as their moves.
 - Computer Player with two difficulty levels:
     - Easy: The computer randomly selects its pieces and moves.
-    - Hard: The computer evaluates the board and selects the best possible move using a greedy/bruteforce (TODO) strategy
+    - Hard: The computer evaluates the board and selects the best possible move using a greedy strategy
 - Different Board Sizes:
     - 8x8, 10x10 or 12x12
 - Two different scoring systems:
@@ -49,7 +49,7 @@ For a more detailed overview of the rulebook and gameplay mechanics, visit the f
 The game configuration is represented as a list of 3 elements:
 - GameMode - Can be represented by numbers 1, 2, 3 or 4. It stores the type of game to be played, 1 meaning Person vs. Person, 2 meaning Person vs. Computer, 3 being Computer vs. Person and 4 being Computer vs. Computer.
 - BoardSize - Stores the size of the board, which is calculated depending on the number of marbles the player wants to play with.
-- Level - Represents the level of expertise of the Computer, 1 being Easy and 2 being Hard. (TODO) On Level 1, the computer randomly chooses one of the available moves, on Level 2 the Computer chooses its play based on what yields a greater value (greedy strategy)
+- Level - Represents the level of expertise of the Computer, 1 being Easy and 2 being Hard. On Level 1, the computer randomly chooses one of the available moves, on Level 2 the Computer chooses its play based on which move yields a greater value, which is equal to the difference of the opposing player's score and the computer's score when looking at the board resulting from that move.
 
 The GameConfiguration is then passed to the initial_state/2 predicate, which generates the game board based on BoardSize and stores that Board and the GameMode in the first Game State.
 
@@ -169,9 +169,8 @@ During gameplay, move validation uses the predicate valid_input_options/2. The i
 ## Conclusions
 
 The work carried out allowed for a deeper understanding of the language. Nonetheless, it was a challenging process, made more difficult by the limited time available to familiarize ourselves with the language and the lack of extensive resources.
-As for known issues, we acknowledge that we were supposed to let users pick the length and width of the board, but this was too difficult to implement in our game. This complexity arose partly because we also did not implement the feature to place marbles randomly while adhering to specific rules: no more than two marbles in a row (including corners) and ensuring an equal number of marbles for each player. The interplay between these requirements proved challenging to manage, and with the limited time and resources available, we were unable to develop a robust solution for these features.
-
-(podemos muda risto depois lol se conseguirmos fazer) ^ 
+As for known issues, the development of the project went as expected and the correct implementation of the predicates was followed.
+A potential improvement would involve enhancing the presentation of the game by developing a GUI or integrating the game with a web interface, so as to make the game look better and more engaging.
 
 ## Bibliography
 To aid the development of this project, the following resources were consulted:
