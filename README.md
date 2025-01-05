@@ -181,8 +181,8 @@ During gameplay, move validation uses the predicate valid_input_options/2. The i
 
 ## Conclusions
 
-The work carried out allowed for a deeper understanding of the language. Nonetheless, it was a challenging process, made more difficult by the limited time available to familiarize ourselves with the language and the lack of extensive resources.
-As for known issues, the development of the project went as expected and the correct implementation of the predicates was followed.
+The work carried out allowed for a deeper understanding of the language. Nonetheless, it was a challenging process, made more difficult by the limited time available to familiarize ourselves with the language.
+As for known issues, the development of the project went as expected and the correct implementation of the predicates was followed so there are none.
 A potential improvement would involve enhancing the presentation of the game by developing a GUI or integrating the game with a web interface, so as to make the game look better and more engaging.
 
 ## Bibliography
