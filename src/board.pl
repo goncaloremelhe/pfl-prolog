@@ -4,16 +4,49 @@
 :-consult('random_marbles.pl').
 
 % ----------- generate_board(+Size, -Board)
-% Generates the board in its initial state, a square of size Size
-
+% Generates a board filled entirely with 'empty' cells.
 generate_board(Size, Board) :-
-    findall(Row, (between(1, Size, RowNum), generate_row(Size, RowNum, Row)), Board).
+    findall(Row, (between(1, Size, _), generate_empty_row(Size, Row)), TempBoard),
 
-% ----------- generate_row(+Size, +RowNum, -Row)
-% Generates a row of the board on its initial state
-generate_row(Size, RowNum, Row) :-
-    findall(Cell, (between(1, Size, ColNum), init_cell(Size, RowNum, ColNum, Cell)), Row).
+    SubListSize is Size - 2,
+    MarblesPerColor is 2 * SubListSize,
+    generate_random_marbles(MarblesPerColor, MarblesList),
 
+    retrieve_sublist(MarblesList, 1, SubListSize, FirstSubList),
+    add_surrounding_elements(corner, FirstSubList, TempLeftColumn),
+    invertList(TempLeftColumn, LeftColumn),
+
+    Second is 1 + SubListSize,
+    SecondFinal is Second + SubListSize -1,
+    retrieve_sublist(MarblesList, Second, SecondFinal, SecondSubList),
+    add_surrounding_elements(corner, SecondSubList, BottomRow),
+
+    Third is 1 + SecondFinal,
+    ThirdFinal is Third + SubListSize -1,
+    retrieve_sublist(MarblesList, Third, ThirdFinal, ThirdSubList),
+    add_surrounding_elements(corner, ThirdSubList, RightColumn),
+
+    Fourth is 1 + ThirdFinal,
+    FourthFinal is Fourth + SubListSize -1,
+    retrieve_sublist(MarblesList, Fourth, FourthFinal, FourthSubList),
+    add_surrounding_elements(corner, FourthSubList, TempTopRow),
+    invertList(TempTopRow, TopRow),
+    
+    replace_column(TempBoard, 1, LeftColumn, TempBoard1),
+    replace_column(TempBoard1, Size, RightColumn, TempBoard2),
+    replace_row(TempBoard2, 1, TopRow, TempBoard3),
+    replace_row(TempBoard3, Size, BottomRow, Board).
+
+add_surrounding_elements(Element, List, FinalResult) :-
+    Result = [Element | List],  % Add the element at the beginning
+    append(Result, [Element], FinalResult).  % Add the element at the end
+
+
+% ----------- generate_empty_row(+Size, -Row)
+% Generates a single row filled with 'empty'.
+
+generate_empty_row(Size, Row) :-
+    findall(empty, (between(1, Size, _)), Row).
 % ----------- init_cell(+Size, +RowNum, +ColNum, -Piece)
 % Determines what to place on a cell depending on x and y coords
 init_cell(_,1,1, corner):- !.

@@ -133,3 +133,8 @@ foldl_our(_, [], Acc, Acc).
 foldl_our(Pred, [Head|Tail], Acc0, Acc) :-
     call(Pred, Head, Acc0, Acc1),
     foldl_our(Pred, Tail, Acc1, Acc).  
+
+
+% Retrieves sublist from index X to Y (0-based index)
+retrieve_sublist(List, X, Y, Sublist) :-
+    findall(Elem, (nth1(Index, List, Elem), Index >= X, Index =< Y), Sublist).

@@ -17,8 +17,8 @@ play :-
 
     difficultyLevel(GameMode, Level),
 
-    write('\nPick the number of pieces per side of the board (6, 8 or 10):\n'),
-    valid_input([2,4, 6, 8, 10], PiecesPerSide),
+    write('\nPick the number of pieces per side of the board (from 5 to 9):\n'),
+    valid_input([5,6,7,8,9], PiecesPerSide),
     BoardSize is PiecesPerSide + 2,
     
     write('\nPick the scoring system (standard or product):\n'),
@@ -143,7 +143,6 @@ game_loop([1, BoardSize, Level], GameState, 'DNF', ListOfMoves):-
     ListOfMoves \= [],
     !,
 
-    write(GameState), nl,
     display_game(GameState),
 
     write('Available pieces:\n'),
