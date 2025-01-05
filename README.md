@@ -5,12 +5,25 @@
 - Group: 4
 - Members:
     - Gonçalo Remelhe, 202205318 (50%) - Implemented....
-    - Joana Noites, 202206284 (50%) - Implemented base board structure, calculating score, 
+    - Joana Noites, 202206284 (50%) - Implemented....
 
-## Instalation:
-1. Ensure that SICStus is installed.
-2. Clone/Download the repository
-4. Open Sicstus and use consult comand: consult(your_path/game.pl).
+## Installation (through SICStus executable) - Windows and Linux
+1. Ensure that SICStus is installed and licensed.
+2. Clone/Download the repository.
+3. Open Sicstus and use consult comand: consult(your_path/src/game).
+4. Finally type 'play.'
+
+## Installation (through the terminal) - Windows
+1. Ensure that SICStus is installed and licensed.
+2. Clone/Download the repository.
+3. Open your terminal in the directory of the repository and run: siscstus -l src/game.pl
+4. Finally type 'play.'
+
+## Installation (through the terminal) - Linux
+1. Ensure that SICStus is installed and licensed.
+2. Clone/Download the repository.
+3. Open your terminal and run the command: rlwrap your_path/bin/sicstus.
+4. Now run the consult command: consult(your_path/src/game).
 5. Finally type 'play.'
 
 ## Description:
@@ -35,7 +48,7 @@ For a more detailed overview of the rulebook and gameplay mechanics, visit the f
 - Visual indication of valid pieces and moves - This helps new users by printing on the game the valid pieces to move as well as their moves.
 - Computer Player with two difficulty levels:
     - Easy: The computer randomly selects its pieces and moves.
-    - Hard: The computer evaluates the board and selects the best possible move using a greedy/bruteforce (TODO) strategy
+    - Hard: The computer evaluates the board and selects the best possible move using a greedy strategy
 - Different Board Sizes:
     - 8x8, 10x10 or 12x12
 - Two different scoring systems:
@@ -49,7 +62,7 @@ For a more detailed overview of the rulebook and gameplay mechanics, visit the f
 The game configuration is represented as a list of 3 elements:
 - GameMode - Can be represented by numbers 1, 2, 3 or 4. It stores the type of game to be played, 1 meaning Person vs. Person, 2 meaning Person vs. Computer, 3 being Computer vs. Person and 4 being Computer vs. Computer.
 - BoardSize - Stores the size of the board, which is calculated depending on the number of marbles the player wants to play with.
-- Level - Represents the level of expertise of the Computer, 1 being Easy and 2 being Hard. (TODO) On Level 1, the computer randomly chooses one of the available moves, on Level 2 the Computer chooses its play based on what yields a greater value (greedy strategy)
+- Level - Represents the level of expertise of the Computer, 1 being Easy and 2 being Hard. On Level 1, the computer randomly chooses one of the available moves, on Level 2 the Computer chooses its play based on which move yields a greater value, which is equal to the difference of the opposing player's score and the computer's score when looking at the board resulting from that move.
 
 The GameConfiguration is then passed to the initial_state/2 predicate, which generates the game board based on BoardSize and stores that Board and the GameMode in the first Game State.
 
@@ -74,14 +87,14 @@ Board1 = [
 In contrast, this is the board displayed to the user, it also includes coordinates and is less wordy and more illustrative:
 
 ```bash
-8  X X X X X W X X 
+8    X X X X W X  
 7  X . . B B B . X 
 6  X . W . W W B X 
 5  X B B B B B W X 
 4  X . . W W B W X 
 3  X . . B W W W X 
 2  X . . B . W . X 
-1  X X X X X X X X 
+1    X X X X X X  
 
    1 2 3 4 5 6 7 8
 ```
@@ -119,14 +132,14 @@ An intermediate game state where the white player is currently playing is repres
 Current Player: white
 Board:
 
-8  X B W X X B W X 
+8    B W X X B W  
 7  X . . B . . . X 
 6  W . . . W . . W 
 5  X . W . . . B X 
 4  X . . . . W . X 
 3  W . . B . . . B 
 2  X . . . B . . X 
-1  X B W X X B W X 
+1    B W X X B W  
 
    1 2 3 4 5 6 7 8
 ```
@@ -137,14 +150,14 @@ A final game state where the white player is currently playing is represented as
 Current Player: white
 Board:
 
-8  X X X X X W X X 
+8    X X X X W X  
 7  X . . B B B . X 
 6  X . W . W W B X 
 5  X B B B B B W X 
 4  X . . W W B W X 
 3  X . . B W W W X 
 2  X . . B . W . X 
-1  X X X X X X X X 
+1    X X X X X X  
 
    1 2 3 4 5 6 7 8
 ```
@@ -168,15 +181,14 @@ During gameplay, move validation uses the predicate valid_input_options/2. The i
 
 ## Conclusions
 
-The work carried out allowed for a deeper understanding of the language. Nonetheless, it was a challenging process, made more difficult by the limited time available to familiarize ourselves with the language and the lack of extensive resources.
-As for known issues, we acknowledge that we were supposed to let users pick the length and width of the board, but this was too difficult to implement in our game. This complexity arose partly because we also did not implement the feature to place marbles randomly while adhering to specific rules: no more than two marbles in a row (including corners) and ensuring an equal number of marbles for each player. The interplay between these requirements proved challenging to manage, and with the limited time and resources available, we were unable to develop a robust solution for these features.
-
-(podemos muda risto depois lol se conseguirmos fazer) ^ 
+The work carried out allowed for a deeper understanding of the language. Nonetheless, it was a challenging process, made more difficult by the limited time available to familiarize ourselves with the language.
+As for known issues, the development of the project went as expected and the correct implementation of the predicates was followed so there are none.
+A potential improvement would involve enhancing the presentation of the game by developing a GUI or integrating the game with a web interface, so as to make the game look better and more engaging.
 
 ## Bibliography
 To aid the development of this project, the following resources were consulted:
 
-- [BoardGameGeek Page for the Mabula Game](https://boardgamegeek.com/boardgame/346743/mabula)
+- [BoardGameGeek Page for Mabula](https://boardgamegeek.com/boardgame/346743/mabula)
 - [Steffen Spiele's Official page for Mabula](https://steffen-spiele.com/products/mabula)
 - [Official Mabula Rule Book](https://cdn.shopify.com/s/files/1/0760/5141/5360/files/Mabula_All.pdf?v=1694099117)
 - [The SWI-Prolog Library](https://eu.swi-prolog.org/pldoc/man?section=libpl)
