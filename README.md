@@ -5,19 +5,26 @@
 - Group: 4
 - Members:
     - Gonçalo Remelhe, 202205318 (50%) - Implemented....
-    - Joana Noites, 202206284 (50%) - Implemented base board structure, calculating score,....
+    - Joana Noites, 202206284 (50%) - Implemented....
 
 ## Installation (through SICStus executable) - Windows and Linux
 1. Ensure that SICStus is installed and licensed.
 2. Clone/Download the repository.
-4. Open Sicstus and use consult comand: consult(your_path/game.pl).
+4. Open Sicstus and use consult comand: consult(your_path/src/game).
 5. Finally type 'play.'
 
-## Installation (through the terminal) - Windows and Linux
+## Installation (through the terminal) - Windows
+1. Ensure that SICStus is installed and licensed.
+2. Clone/Download the repository.
+3. Open your terminal in the directory of the repository and run: siscstus -l src/game.pl
+4. Now run the consult command: consult(your_path/src/game).
+6. Finally type 'play.'
+
+## Installation (through the terminal) - Linux
 1. Ensure that SICStus is installed and licensed.
 2. Clone/Download the repository.
 3. Open your terminal and run the command: rlwrap your_path/bin/sicstus.
-4. Now run the consult command: consult(your_path/game.pl).
+4. Now run the consult command: consult(your_path/src/game).
 6. Finally type 'play.'
 
 ## Description:
