@@ -3,8 +3,21 @@
 :-consult('utils.pl').
 :-consult('random_marbles.pl').
 
-% ----------- generate_board(+Size, -Board)
-% Generates a board filled entirely with 'empty' cells.
+% ----------- generate_board(+Rows, +Cols, -Board)
+% Initializes the game board with the specified number of rows and columns.
+%
+% Strategy:
+% 1. Create Rows:
+%    - Recursively generate each row with the given number of columns, initializing each cell to empty.
+% 2. Create the perimeter
+%    - Get the perimeter, dissassemble the result from generate_random_elements/2 and transform into row/column
+% 3. Assemble Board:
+%    - Combine all generated rows into a single board structure represented as a list of lists.
+% Parameters:
+% - Rows: The number of rows in the board.
+% - Cols: The number of columns in the board.
+% - Board: The resulting game board, represented as a list of lists where each sublist corresponds to a row.
+%
 generate_board(Size, Board) :-
     findall(Row, (between(1, Size, _), generate_empty_row(Size, Row)), TempBoard),
 
@@ -116,6 +129,8 @@ show_piece(blocked) :-
 show_piece(_) :-
     write(' ').
 
+% ----------- move_pieces(+Board, +SelectedPiece, +SelectedMove, -NewBoard)
+% Moves a piece horizontally (left/right) from SelectedPiece to SelectedMove on the Board, resulting in NewBoard.
 %Left/Right Move
 move_pieces(Board, SelectedPiece, SelectedMove, NewBoard) :-
     parse_move_code(SelectedPiece, RowPiece, ColPiece),
@@ -139,6 +154,8 @@ move_pieces(Board, SelectedPiece, SelectedMove, NewBoard) :-
     % Mudar Row
     replace_row(Board, BoardRowIndex, NewRow, NewBoard).
 
+% ----------- move_pieces(+Board, +SelectedPiece, +SelectedMove, -NewBoard)
+% Moves a piece vertically (up/down) from SelectedPiece to SelectedMove on the Board, resulting in NewBoard.
 % Up/Down Move
 move_pieces(Board, SelectedPiece, SelectedMove, NewBoard) :-
     parse_move_code(SelectedPiece, RowPiece, ColPiece),

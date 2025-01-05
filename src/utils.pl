@@ -112,6 +112,7 @@ convert_to_options([(Row, Col)|RestTuples], [Option|RestOptions]) :-
     atom_codes(Option, OptionCodes),
     convert_to_options(RestTuples, RestOptions).
 
+% Our implementation of subtract
 subtract_our([], _, []).
 subtract_our([X|Tail], List2, [X|Result]) :-
     \+ member(X, List2),
@@ -120,6 +121,7 @@ subtract_our([X|Tail], List2, Result) :-
     member(X, List2),
     subtract_our(Tail, List2, Result).
 
+% Our implementation of max list
 max_list_our([X], X).
 max_list_our([Head|Tail], Max) :-
     max_list_our(Tail, TailMax),
@@ -129,12 +131,13 @@ max_list_our([Head|Tail], Max) :-
 % ----------- foldl_our(+Pred, +List, +Acc0, -Acc) ----------- 
 % Applies Pred to each element of List and the accumulator Acc0.
 % Resulting in Acc after processing all elements.
+% Our implementation of foldl
 foldl_our(_, [], Acc, Acc). 
 foldl_our(Pred, [Head|Tail], Acc0, Acc) :-
     call(Pred, Head, Acc0, Acc1),
     foldl_our(Pred, Tail, Acc1, Acc).  
 
-
+% Our implementation of sublist
 % Retrieves sublist from index X to Y (0-based index)
 retrieve_sublist(List, X, Y, Sublist) :-
     findall(Elem, (nth1(Index, List, Elem), Index >= X, Index =< Y), Sublist).
