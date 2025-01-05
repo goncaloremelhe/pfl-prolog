@@ -66,14 +66,14 @@ must_be_member(_, _) :-
 % ----------- parse_move_code(+Code, -Row, -Col)
 % Parses the input "Row-Col" => Row=number, Col=number
 parse_move_code(Code, NewRow, NewCol) :-
-    atom_length(Code, 3),
-    sub_atom(Code, 1, 1, 1, '-'),
-    sub_atom(Code, 0, 1, _, RowStr),
-    sub_atom(Code, 2, 1, _, ColStr),
-    atom_chars(RowStr, [RowChar]),
-    number_chars(NewRow, [RowChar]),
-    atom_chars(ColStr, [ColChar]),
-    number_chars(NewCol, [ColChar]).
+    sub_atom(Code, HyphenIndex, 1, _, '-'), % get index of hyphen
+    sub_atom(Code, 0, HyphenIndex, _, RowPart),
+    StartColIndex is HyphenIndex + 1,
+    sub_atom(Code, StartColIndex, _, 0, ColPart),
+    atom_codes(RowPart, RowCodes),
+    number_codes(NewRow, RowCodes),
+    atom_codes(ColPart, ColCodes),
+    number_codes(NewCol, ColCodes).
 
 % ----------- get_line(+Result, +Acc)
 % Reads a line of characters until a newline is encountered

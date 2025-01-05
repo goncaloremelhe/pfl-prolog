@@ -5,7 +5,7 @@
 - Group: 4
 - Members:
     - Gonçalo Remelhe, 202205318 (50%) - Implemented....
-    - Joana Noites, 202206284 (50%) - Implemented....
+    - Joana Noites, 202206284 (50%) - Implemented base board structure, calculating score, 
 
 ## Instalation:
 1. Ensure that SICStus is installed.

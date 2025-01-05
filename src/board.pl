@@ -48,10 +48,17 @@ piece(corner, 'C').
 % writes Board on the console, row by row
 show_board([], _).
 show_board([Row|RemainingRows], Coord) :-
-    write(Coord), write('  '),
+    coordinate_spacing(Coord),
     NewCoord is Coord-1,
     show_row(Row), nl,
     show_board(RemainingRows, NewCoord).
+
+coordinate_spacing(Coord):-
+    Coord < 10,
+    write(Coord), write('  ').
+coordinate_spacing(Coord):-
+    Coord >= 10,
+    write(Coord), write(' ').
 
 
 % ----------- show_row(+Row)

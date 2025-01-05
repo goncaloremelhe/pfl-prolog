@@ -27,8 +27,8 @@ play :-
     valid_input([1,2], ScoreSystem),
     game([GameMode, BoardSize, Level, ScoreSystem]).
 
-
-% Por agora nao faz nada
+% difficultyLevel(+GameMode, -Level)
+% Asks user which difficulty level they want the computer to have, stores result in Level
 difficultyLevel(1,0).
 difficultyLevel(GameMode, Level):-
     GameMode > 1,
@@ -37,7 +37,8 @@ difficultyLevel(GameMode, Level):-
     write('2. Hard\n'),
     valid_input([1,2], Level).
 
-
+% game(+GameState)
+% Receives game config and builds the game's initial state, also starts the game loop by providing the game state and list of all available moves
 game([GameMode, BoardSize, Level, ScoreSystem]):-
     initial_state([GameMode, BoardSize, Level, ScoreSystem], GameState),
     valid_moves(GameState, ListOfMoves),
@@ -53,9 +54,8 @@ getPiecesFromValidMoves([], []).
 getPiecesFromValidMoves([(Piece, _)|Moves], [Piece|Pieces]):-
     getPiecesFromValidMoves(Moves,Pieces).
 
-% ----------- game_loop(+GameConfig, +GameState)
-% starts the game loop with given config
-
+% game_loop(+GameConfig, +GameState)
+% starts the game loop with given game config and game state, 'DNF' indicates that the game isn't yet finished
 game_loop([2, BoardSize, Level], GameState, 'DNF', ListOfMoves) :-
     ListOfMoves \= [],
     GameState = [_, black, _],
@@ -189,12 +189,12 @@ game_loop(_, [Board, _, ScoreSystem], Winner, _) :-
     calculate_score(Board, Winner, Score, ScoreSystem),
     format('Final Score: ~w\n', [Score]).
 
-% ----------- initial_state(+GameConfig)
-% Receives game configuration and returns the initial game state (player with the black pieces is starting for now but we can change this later)
+% initial_state(+GameConfig)
+% Receives game configuration and returns the initial game state (player with the black pieces starts the game)
 initial_state([_, BoardSize, _, ScoreSystem], [Board, black, ScoreSystem]) :-
     generate_board(BoardSize, Board).
 
-% ----------- display_game(+GameState)
+% display_game(+GameState)
 % Receives game state and displays current player and board
 display_game([Board, CurrentPlayer, _]):-
     write('\nCurrent Player: '), write(CurrentPlayer), nl,
@@ -207,7 +207,7 @@ display_board(Board) :-
     write('\n  '),
     print_Coords(1, Length).
 
-% ----------- get_remaining_pieces(+GameState, -RemainingPieces)
+% get_remaining_pieces(+GameState, -RemainingPieces)
 % Determines the pieces on the perimeter that match the CurrentPlayer
 get_remaining_pieces([Board, CurrentPlayer, _], RemainingPieces) :-
     
@@ -218,7 +218,7 @@ get_remaining_pieces([Board, CurrentPlayer, _], RemainingPieces) :-
     include(matches_piece(Board, CurrentPlayer), Perimeter, RemainingPiecesUnordered),
     sort(RemainingPiecesUnordered, RemainingPieces).
 
-% ----------- get_perimeter_positions(+Board, -Perimeter)
+% get_perimeter_positions(+Board, -Perimeter)
 % Returns the positions of the perimeter of the board
 get_perimeter_positions(Board, Perimeter) :-
     length(Board, Size),
@@ -237,7 +237,7 @@ get_perimeter_positions(Board, Perimeter) :-
 
     append([Bottom, Top, Left, Right], Perimeter).
 
-% ----------- matches_piece(+Board, +Player, +Position)
+% matches_piece(+Board, +Player, +Position)
 % Checks if the piece at the given position matches the CurrentPlayer
 matches_piece(Board, Player, (Row, Col)) :-
     length(Board, Size),       
@@ -245,7 +245,7 @@ matches_piece(Board, Player, (Row, Col)) :-
     nth1(Y, Board, BoardRow),
     nth1(Col, BoardRow, Player).
 
-% ----------- print_Coords(+CurrIndex, +Length)
+% print_Coords(+CurrIndex, +Length)
 % Print the coordinates from 1 to Length
 print_Coords(Length, Length) :- 
     write(' '),
@@ -257,7 +257,7 @@ print_Coords(CurrIndex, Length):-
     NewIndex is CurrIndex+1,
     print_Coords(NewIndex, Length).
 
-% ----------- print_options(+Options)
+% print_options(+Options)
 % Print available pieces to move in the format row-column
 print_options([]) :- nl, nl.
 print_options([Option|RemainingOptions]) :-
@@ -265,7 +265,7 @@ print_options([Option|RemainingOptions]) :-
     write(' '),
     print_options(RemainingOptions).
 
-% ----------- get_piece_moves(+Board, +Position, -Moves)
+% get_piece_moves(+Board, +Position, -Moves)
 % Get valid moves for a piece at a given position based on its location and available empty spaces
 % Em cada uma, pega na row/column, vê quantos empty tem e calcula os mvoes possiveis
 get_piece_moves(Board, BoardMax, (Row, 1), Moves) :-
@@ -330,7 +330,7 @@ move([Board, white, ScoreSystem],  (SelectedPiece, SelectedMove), [NewBoard, bla
     move_pieces(Board, SelectedPiece, SelectedMove, NewBoard).
 
 
-% ----------- valid_moves(+GameState, -ListOfMoves)
+% valid_moves(+GameState, -ListOfMoves)
 % Retrieves all valid moves for the current player
 valid_moves([Board, CurrentPlayer, _], ListOfMoves) :-
     get_remaining_pieces([Board, CurrentPlayer, _], TempRemainingPieces),
@@ -348,8 +348,8 @@ valid_moves_aux(Board, BoardSize, [Piece|Pieces], [(Piece,Move)|Moves]) :-
 valid_moves_aux(Board, BoardSize, [_|Pieces], Moves) :-
     valid_moves_aux(Board, BoardSize, Pieces, Moves).
 
-% ----------- game_over(+GameState, -Winner)
-% Checks if the game is over, this means checking if both players are out of valid moves, if so, the winner is calculated
+% game_over(+GameState, -Winner)
+% Checks if the game is over, this means checking if both players are out of valid moves, if so, the winner is calculated with ScoreSystem
 game_over(GameState, Winner) :-
     GameState = [Board, _, ScoreSystem],
     valid_moves([Board, white, _], WhiteMoves),
@@ -363,14 +363,15 @@ game_over_aux([], [], Board, Winner, ScoreSystem) :-
 game_over_aux(_, _, _, 'DNF', _).
 
 
-
+% winner_is(+ScoreBlack, +ScoreWhite, -Result)
+% Returns the winner after comparing both scores, or a tie
 winner_is(ScoreBlack, ScoreWhite, 'black'):- ScoreBlack > ScoreWhite.
 winner_is(ScoreBlack, ScoreWhite, 'white'):- ScoreWhite > ScoreBlack.
 winner_is(ScoreBlack, ScoreWhite, 'draw'):- ScoreBlack =:= ScoreWhite.
 
 
-% ------------ calculate_score(+Board, +Player, -Score)
-% Calculates score for specified player when game is over, for now returning standard score
+% calculate_score(+Board, +Player, -Score)
+% Calculates score for specified player when game is over, the option 1 is used if user chose the standard score system, 2 for the product score
 calculate_score(Board, Player, ScoreStandard, 1):-
     find_player_pieces(Board, Player, ListOfPieces),
     find_groups(ListOfPieces, Groups),
@@ -380,32 +381,31 @@ calculate_score(Board, Player, ScoreProduct, 2):-
     find_groups(ListOfPieces, Groups),
     multiply_groups(Groups, ScoreProduct). 
 
-% Main predicate: Finds all groups of adjacent pieces
+% find_groups(+Pieces, -Groups)
+% Finds all groups of adjacent pieces on the board
 find_groups(Pieces, Groups) :-
-    find_groups_aux(Pieces, [], Groups). % Start the recursive search with an empty accumulator.
+    find_groups_aux(Pieces, [], Groups).
 
-% Base case: no more pieces, no more groups.
+% Accumulates the groups
 find_groups_aux([], Groups, Groups).
-
-% Recursive case: process a piece, find its group, and continue with the rest.
 find_groups_aux([Piece|Rest], Accumulator, Groups) :-
-    dfs([Piece], Rest, Group, RemainingPieces), % Find one group starting with Piece.
-    append(Accumulator, [Group], NewAccumulator), % Add the found group to the accumulator.
-    find_groups_aux(RemainingPieces, NewAccumulator, Groups). % Continue with the remaining pieces.
+    dfs([Piece], Rest, Group, RemainingPieces),
+    append(Accumulator, [Group], NewAccumulator),
+    find_groups_aux(RemainingPieces, NewAccumulator, Groups).
 
-% DFS to find all connected pieces
-dfs([], Remaining, [], Remaining). % Base case: no more pieces to explore.
+% dfs through the pieces to find groups
+dfs([], Remaining, [], Remaining).
 dfs([Current|Stack], Pieces, [Current|Group], Remaining) :-
     findall(Neighbor, 
             (member(Neighbor, Pieces), adjacent(Current, Neighbor)), 
-            Neighbors), % Find all unvisited neighbors.
-    subtract_our(Pieces, Neighbors, NewPieces), % Remove Neighbors from Pieces.
-    append(Neighbors, Stack, NewStack), % Add Neighbors to the stack.
-    dfs(NewStack, NewPieces, Group, Remaining). % Continue DFS.
+            Neighbors),
+    subtract_our(Pieces, Neighbors, NewPieces),
+    append(Neighbors, Stack, NewStack),
+    dfs(NewStack, NewPieces, Group, Remaining).
 
 
-
-% Check for orthogonal adjacency
+% adjacent(+Coord1, +Coord2)
+% verifies if the marble on coord 1 is orthogonally adjacent to the one on coord 2
 adjacent((Row, Col), (R, C)) :-
     (R is Row - 1, C is Col);
     (R is Row + 1, C is Col);
@@ -417,7 +417,7 @@ biggest_group(Groups, Size) :-
     findall(Length, (member(Group, Groups), length(Group, Length)), Lengths),
     max_list_our(Lengths, Size).
 
-% Multiply the sizes of all groups -> product scoring
+% multiply the sizes of all groups -> product scoring
 multiply_groups(Groups, Product) :-
     findall(Length, (member(Group, Groups), length(Group, Length)), Lengths),
     foldl_our(multiply, Lengths, 1, Product).
@@ -425,7 +425,7 @@ multiply_groups(Groups, Product) :-
 multiply(X, Y, Z) :- Z is X * Y.
 
 
-%-------------- find_player_pieces(+Board, +Player, -ListOfPieces)
+% find_player_pieces(+Board, +Player, -ListOfPieces)
 % Finds all coordinates of the specified Players pieces on the Board.
 find_player_pieces(Board, Player, ListOfPieces) :-
     findall((Row, Col),
