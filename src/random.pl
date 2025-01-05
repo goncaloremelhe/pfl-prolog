@@ -1,9 +1,11 @@
 :- use_module(library(random)).
 
 % Main predicate to generate a random marble list
-generate_random_marbles(Half, Marbles) :-
+generate_random_marbles(Half, Result) :-
     findall(MarblesConfig, generate_marbles(Half, Half, [], MarblesConfig), AllSolutions),
-    random_member(Marbles, AllSolutions).
+    random_member(Marbles, AllSolutions),
+    last(Marbles, Last),
+    check_wraparound(Marbles, Last, Half, Result).
 
 generate_marbles(0, 0, Acc, Acc).
 
@@ -25,6 +27,12 @@ generate_marbles(BLeft, WLeft, Acc, Marbles) :-
 can_place(Color, [Color, Color|_]) :- !, fail.
 can_place(_, _).
 
-check_wraparound([First, First|_],First) :-
-    fail.
+%if first 2 and last element are the same create another result and recursively check if that result wraps around
+check_wraparound([FirstElement, FirstElement| _], FirstElement, Half, CheckedResult) :-
+    findall(MarblesConfig, generate_marbles(Half, Half, [], MarblesConfig), AllSolutions),
+    random_member(Result, AllSolutions),
+    last(Result, Last),
+    check_wraparound(Result, Last, Half, CheckedResult).
+
+check_wraparound(Marbles, _, _, Marbles).
     
