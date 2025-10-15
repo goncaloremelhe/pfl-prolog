@@ -6,6 +6,9 @@
 - Members:
     - Gonçalo Remelhe, 202205318 (50%) - Implemented move, choose_move, value, valid_moves
     - Joana Noites, 202206284 (50%) - Implemented game_over, display_game, initial_state
+ 
+## Grade:
+- The project was graded 17.8 out of 20
 
 ## Installation (through SICStus executable) - Windows and Linux
 1. Ensure that SICStus is installed and licensed.
